@@ -1,0 +1,75 @@
+/* Additional styles for MoneyMitra achievements and month-end review */
+.reality-layout {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.35fr);
+  gap: 22px;
+  align-items: start;
+  margin-bottom: 34px;
+}
+
+.feature-form { display: grid; gap: 9px; }
+.feature-form label { color: #59635e; font-size: 0.88rem; font-weight: 600; }
+.feature-form .text-input { width: 100%; box-sizing: border-box; }
+.feature-footnote { margin: 14px 0 0; color: #78827c; font-size: 0.78rem; line-height: 1.55; }
+
+.reality-report-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 18px; }
+.reality-report-head h3, .reality-entry-panel h3 { margin: 0 0 5px; }
+.reality-report-head p, .reality-entry-panel .panel-heading p { margin: 0; color: #78827c; font-size: 0.88rem; }
+.month-picker { max-width: 165px; min-width: 135px; border: 1px solid #dce5de; border-radius: 10px; padding: 10px; color: #263d32; background: #fff; font: inherit; }
+.reality-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+.reality-metric { min-width: 0; border-radius: 13px; background: #f5f8f5; padding: 14px 12px; }
+.reality-metric span { display: block; color: #69766e; font-size: 0.76rem; line-height: 1.4; margin-bottom: 8px; }
+.reality-metric strong { display: block; color: #263d32; font-size: clamp(1rem, 2vw, 1.35rem); overflow-wrap: anywhere; }
+.reality-metric.metric-over { background: #fff1ed; }
+.reality-metric.metric-over strong { color: #b74c36; }
+.reality-metric.metric-under { background: #eaf7ef; }
+.reality-progress-label { display: flex; justify-content: space-between; gap: 10px; font-size: 0.86rem; margin-bottom: 8px; color: #59665e; }
+.reality-progress-track, .achievement-progress-track { height: 9px; overflow: hidden; border-radius: 20px; background: #e9eee9; }
+.reality-progress-fill, .achievement-progress-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, #69b68b, #25845b); transition: width 180ms ease; }
+.reality-progress-fill.over-fill { background: #df785f; }
+.reality-insight { display: flex; gap: 12px; margin: 20px 0; padding: 15px; border: 1px solid #e4eee5; border-radius: 13px; background: #f8fbf8; }
+.insight-icon { font-size: 1.4rem; }
+.reality-insight strong { color: #2f4738; }
+.reality-insight p { margin: 5px 0 0; color: #66736a; font-size: 0.88rem; line-height: 1.55; }
+.category-breakdown { border-top: 1px solid #edf0ed; padding-top: 15px; margin-top: 18px; }
+.category-breakdown h4, .expense-list-head h4 { margin: 0; color: #304438; }
+.category-total-row { display: grid; grid-template-columns: 1fr auto 44px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid #f0f2f0; font-size: 0.88rem; }
+.category-total-row strong { color: #2e4638; }
+.category-percent { color: #78827c; text-align: right; font-size: 0.8rem; }
+.expense-list-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 20px; }
+.expense-list-head > span { color: #7b867e; font-size: 0.8rem; }
+.expense-record-list { display: grid; gap: 0; }
+.expense-record { display: grid; grid-template-columns: minmax(0, 1fr) auto 28px; gap: 10px; align-items: center; padding: 12px 0; border-bottom: 1px solid #edf0ed; }
+.expense-record > div { display: grid; gap: 4px; min-width: 0; }
+.expense-record > div strong { color: #34483b; font-size: 0.9rem; overflow-wrap: anywhere; }
+.expense-record > div span { color: #849087; font-size: 0.76rem; }
+.expense-record > strong { color: #2d4637; white-space: nowrap; font-size: 0.9rem; }
+.remove-expense { border: 0; border-radius: 8px; background: #fff0ed; color: #b84f3b; cursor: pointer; font-size: 1.15rem; line-height: 1; width: 28px; height: 28px; }
+.empty-feature { color: #879188; font-size: 0.86rem; line-height: 1.5; }
+
+.achievement-summary { margin-bottom: 18px; }
+.achievement-summary-copy { display: flex; align-items: center; gap: 13px; margin-bottom: 15px; }
+.achievement-trophy { display: grid; place-items: center; width: 48px; height: 48px; flex: 0 0 48px; border-radius: 14px; background: #fff4d9; font-size: 1.6rem; }
+.achievement-summary-copy strong { color: #2e4436; }
+.achievement-summary-copy p { margin: 5px 0 0; color: #778179; font-size: 0.86rem; }
+.achievement-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 34px; }
+.achievement-card { border: 1px solid #e5ebe5; border-radius: 16px; background: #fff; padding: 20px; min-width: 0; }
+.achievement-unlocked { background: linear-gradient(145deg, #f7fcf8, #fff); border-color: #cfe7d5; }
+.achievement-locked { opacity: 0.72; }
+.achievement-icon { display: grid; place-items: center; width: 48px; height: 48px; border-radius: 14px; background: #eef7ef; font-size: 1.6rem; margin-bottom: 14px; }
+.achievement-locked .achievement-icon { background: #f1f2f1; }
+.achievement-status { color: #2e8658; font-size: 0.68rem; font-weight: 800; letter-spacing: 0.1em; margin-bottom: 8px; }
+.achievement-locked .achievement-status { color: #8a928c; }
+.achievement-card h3 { margin: 0 0 7px; color: #2e4436; font-size: 1rem; }
+.achievement-card p { margin: 0; color: #778179; font-size: 0.84rem; line-height: 1.55; }
+
+@media (max-width: 900px) {
+  .reality-layout { grid-template-columns: 1fr; }
+  .achievement-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .reality-report-head { flex-direction: column; }
+  .reality-metrics { grid-template-columns: 1fr; }
+  .achievement-grid { grid-template-columns: 1fr; }
+  .category-total-row { grid-template-columns: 1fr auto 38px; }
+}
