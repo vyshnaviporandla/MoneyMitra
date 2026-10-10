@@ -184,6 +184,26 @@ function App() {
     totals[category] = (totals[category] || 0) + (Number(item.amount) || 0);
     return totals;
   }, {});
+
+  const spendingCategories = [
+    { name: "Food", color: "#b8f34a", planned: essentialsPlan / 4 },
+    { name: "Travel", color: "#42a5f5", planned: essentialsPlan / 4 },
+    { name: "College", color: "#ffc857", planned: essentialsPlan / 4 },
+    { name: "Health", color: "#f87968", planned: essentialsPlan / 4 },
+    { name: "Shopping", color: "#9b78f6", planned: flexiblePlan / 3 },
+    { name: "Entertainment", color: "#ff9848", planned: flexiblePlan / 3 },
+    { name: "Other", color: "#55c982", planned: flexiblePlan / 3 },
+  ].map((item) => ({ ...item, spent: Number(categoryTotals[item.name]) || 0 }));
+  const donutTotal = spendingCategories.reduce((sum, item) => sum + item.spent, 0);
+  let donutOffset = 0;
+  const donutGradient = donutTotal
+    ? spendingCategories.map((item) => {
+        const start = donutOffset;
+        donutOffset += (item.spent / donutTotal) * 100;
+        return `${item.color} ${start}% ${donutOffset}%`;
+      }).join(", ")
+    : "#2a2a2a 0% 100%";
+
   const achievementList = [
     { title: "First Steps", description: "Complete your first money mission.", icon: "🌱", unlocked: completedCount >= 1 },
     { title: "Budget Builder", description: "Create a monthly budget and give your money a plan.", icon: "🧮", unlocked: budget > 0 },
@@ -902,27 +922,80 @@ function App() {
             <p className="feature-footnote">Spent amounts use the expenses you record for {reportMonth}. This demo does not import bank or UPI transactions.</p>
           </article>
 
-          <article className="panel smart-budget-results-panel">
-            <div className="panel-heading"><div><h3>Your budget at a glance</h3><p>Live totals for the selected month.</p></div><span className="soft-badge">{reportMonth}</span></div>
-            <div className="smart-budget-metrics">
-              <div className="smart-budget-metric"><span>Income / allowance</span><strong>{formatMoney(smartIncome)}</strong></div>
-              <div className="smart-budget-metric"><span>Total budgeted</span><strong>{formatMoney(plannedTotal)}</strong></div>
-              <div className="smart-budget-metric"><span>Spent so far</span><strong>{formatMoney(monthSpend)}</strong></div>
-              <div className={`smart-budget-metric ${balanceAfterSpending < 0 ? "smart-metric-over" : "smart-metric-positive"}`}><span>Balance after spending + savings plan</span><strong>{formatMoney(balanceAfterSpending)}</strong></div>
+          <article className="panel smart-budget-results-panel smart-dashboard-panel">
+            <div className="smart-dashboard-header">
+              <div>
+                <div className="smart-dashboard-kicker">MONEYMITRA · MONTHLY OVERVIEW</div>
+                <h3>Dashboard</h3>
+                <p>Your plan, real recorded expenses, and the money left.</p>
+              </div>
+              <label className="smart-month-picker">Month
+                <input aria-label="Select report month" type="month" value={reportMonth} onChange={(event) => setReportMonth(event.target.value)} />
+              </label>
             </div>
-            <div className="smart-budget-table-wrap">
-              <table className="smart-budget-table">
-                <thead><tr><th>Category / goal</th><th>Budgeted</th><th>Spent / saved</th><th>Remaining</th></tr></thead>
-                <tbody>
-                  <tr><td><span className="smart-category-dot essentials-dot"></span>Essentials</td><td>{formatMoney(essentialsPlan)}</td><td>{formatMoney(essentialsSpent)}</td><td className={essentialsRemaining < 0 ? "smart-over-text" : ""}>{formatMoney(essentialsRemaining)}</td></tr>
-                  <tr><td><span className="smart-category-dot flexible-dot"></span>Flexible</td><td>{formatMoney(flexiblePlan)}</td><td>{formatMoney(flexibleSpent)}</td><td className={flexibleRemaining < 0 ? "smart-over-text" : ""}>{formatMoney(flexibleRemaining)}</td></tr>
-                  <tr><td><span className="smart-category-dot savings-dot"></span>Savings goal</td><td>{formatMoney(goalAmount)}</td><td>{formatMoney(savedAmount)}</td><td>{formatMoney(Math.max(0, goalAmount - savedAmount))}</td></tr>
-                </tbody>
-              </table>
+
+            <div className="smart-dashboard-top">
+              <div className="smart-dashboard-summary">
+                <div className="smart-income-card">
+                  <span>MONTHLY INCOME / ALLOWANCE</span>
+                  <strong>{formatMoney(smartIncome)}</strong>
+                  <span className="smart-income-note">Your available money for this month</span>
+                </div>
+                <div className="smart-mini-metrics">
+                  <div><span>Budgeted</span><strong>{formatMoney(plannedTotal)}</strong></div>
+                  <div><span>Spent</span><strong>{formatMoney(monthSpend)}</strong></div>
+                  <div><span>Remaining</span><strong>{formatMoney(smartIncome - monthSpend)}</strong></div>
+                </div>
+                <div className="smart-balance-banner">
+                  <span>After spending + savings allocation</span>
+                  <strong className={balanceAfterSpending < 0 ? "smart-over-text" : ""}>{formatMoney(balanceAfterSpending)}</strong>
+                </div>
+              </div>
+
+              <div className="smart-spending-card">
+                <h4>Spending breakdown</h4>
+                <div className="smart-donut-area">
+                  <div className="smart-donut" style={{ background: `conic-gradient(${donutGradient})` }} role="img" aria-label={`Spending breakdown totaling ${formatMoney(donutTotal)}`}>
+                    <div className="smart-donut-hole"><strong>{formatMoney(monthSpend)}</strong><span>total spent</span></div>
+                  </div>
+                  <div className="smart-donut-legend">
+                    {spendingCategories.filter((item) => item.spent > 0).length
+                      ? spendingCategories.filter((item) => item.spent > 0).map((item) => (
+                        <div className="smart-legend-row" key={item.name}><span style={{ background: item.color }} /> <span>{item.name}</span><strong>{formatMoney(item.spent)}</strong></div>
+                      ))
+                      : <p className="smart-empty-spending">Record an expense to see your breakdown.</p>}
+                  </div>
+                </div>
+              </div>
             </div>
-            <div className={`smart-budget-leftover ${unallocatedAfterPlan < 0 ? "smart-leftover-over" : ""}`}>
-              <div><span>Unallocated after your plan</span><strong>{formatMoney(unallocatedAfterPlan)}</strong></div>
-              <p>{unallocatedAfterPlan < 0 ? "Your plan is above your income. Reduce one or more allocations to bring it within your allowance." : unallocatedAfterPlan === 0 ? "Every rupee has a plan. Keep recording expenses to track your remaining category balances." : "This amount is not assigned yet. You can keep it as a buffer or allocate it to a priority."}</p>
+
+            <div className="smart-category-table-card">
+              <div className="smart-table-title">
+                <div><h4>Expense categories</h4><p>Planned amounts are split evenly within essentials and flexible spending.</p></div>
+                <span>{monthExpenses.length} recorded {monthExpenses.length === 1 ? "expense" : "expenses"}</span>
+              </div>
+              <div className="smart-budget-table-wrap">
+                <table className="smart-budget-table smart-budget-table-rich">
+                  <thead><tr><th>Category</th><th>Planned</th><th>Actual</th><th>Progress</th><th>Status</th></tr></thead>
+                  <tbody>
+                    {spendingCategories.map((item) => {
+                      const percent = item.planned > 0 ? Math.min(100, (item.spent / item.planned) * 100) : (item.spent > 0 ? 100 : 0);
+                      const overBudget = item.spent > item.planned;
+                      return <tr key={item.name}>
+                        <td><span className="smart-category-dot" style={{ background: item.color }}></span>{item.name}</td>
+                        <td>{formatMoney(item.planned)}</td>
+                        <td>{formatMoney(item.spent)}</td>
+                        <td><div className="smart-table-progress"><span className={overBudget ? "is-over" : ""} style={{ width: `${percent}%` }} /></div></td>
+                        <td><span className={`smart-status ${overBudget ? "status-over" : item.spent > 0 ? "status-on-track" : "status-empty"}`}>{overBudget ? "OVER PLAN" : item.spent > 0 ? "TRACKING" : "NO SPEND"}</span></td>
+                      </tr>;
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              <div className={`smart-budget-leftover ${unallocatedAfterPlan < 0 ? "smart-leftover-over" : ""}`}>
+                <div><span>Unallocated after your plan</span><strong>{formatMoney(unallocatedAfterPlan)}</strong></div>
+                <p>{unallocatedAfterPlan < 0 ? "Your plan is above your income. Reduce one or more allocations to bring it within your allowance." : unallocatedAfterPlan === 0 ? "Every rupee has a plan. Keep recording expenses to track your remaining category balances." : "This amount is not assigned yet. You can keep it as a buffer or allocate it to a priority."}</p>
+              </div>
             </div>
           </article>
         </section>
