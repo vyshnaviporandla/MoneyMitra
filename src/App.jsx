@@ -8,6 +8,9 @@ import "./MoneyMitraFeatures.css";
 const defaultData = {
 
   budget: 2000,
+  essentialsPlan: 1000,
+  flexiblePlan: 600,
+  monthlySavingsPlan: 300,
 
   goalName: "Emergency savings",
 
@@ -109,6 +112,9 @@ function App() {
   const [data, setData] = useState(readSavedData);
 
   const [budgetInput, setBudgetInput] = useState(String(data.budget));
+  const [essentialsPlanInput, setEssentialsPlanInput] = useState(String(data.essentialsPlan ?? Math.round(data.budget * 0.5)));
+  const [flexiblePlanInput, setFlexiblePlanInput] = useState(String(data.flexiblePlan ?? Math.round(data.budget * 0.3)));
+  const [monthlySavingsPlanInput, setMonthlySavingsPlanInput] = useState(String(data.monthlySavingsPlan ?? Math.round(data.budget * 0.15)));
 
   const [goalInput, setGoalInput] = useState(data.goalName);
 
@@ -160,6 +166,19 @@ function App() {
   const monthExpenses = expenseRecords.filter((item) => item.date && item.date.slice(0, 7) === reportMonth);
   const monthSpend = monthExpenses.reduce((total, item) => total + (Number(item.amount) || 0), 0);
   const monthRemaining = budget - monthSpend;
+  const smartIncome = Math.max(0, Number(budgetInput) || 0);
+  const essentialsPlan = Math.max(0, Number(essentialsPlanInput) || 0);
+  const flexiblePlan = Math.max(0, Number(flexiblePlanInput) || 0);
+  const monthlySavingsPlan = Math.max(0, Number(monthlySavingsPlanInput) || 0);
+  const essentialsCategories = ["Food", "Travel", "College", "Health"];
+  const flexibleCategories = ["Shopping", "Entertainment", "Other"];
+  const essentialsSpent = monthExpenses.filter((item) => essentialsCategories.includes(item.category)).reduce((total, item) => total + (Number(item.amount) || 0), 0);
+  const flexibleSpent = monthExpenses.filter((item) => flexibleCategories.includes(item.category)).reduce((total, item) => total + (Number(item.amount) || 0), 0);
+  const essentialsRemaining = essentialsPlan - essentialsSpent;
+  const flexibleRemaining = flexiblePlan - flexibleSpent;
+  const plannedTotal = essentialsPlan + flexiblePlan + monthlySavingsPlan;
+  const unallocatedAfterPlan = smartIncome - plannedTotal;
+  const balanceAfterSpending = smartIncome - monthSpend - monthlySavingsPlan;
   const categoryTotals = monthExpenses.reduce((totals, item) => {
     const category = item.category || "Other";
     totals[category] = (totals[category] || 0) + (Number(item.amount) || 0);
@@ -202,6 +221,29 @@ function App() {
   }
 
 
+
+  function saveSmartBudget(event) {
+    event.preventDefault();
+    const income = Number(budgetInput);
+    const essentials = Number(essentialsPlanInput);
+    const flexible = Number(flexiblePlanInput);
+    const monthlySavings = Number(monthlySavingsPlanInput);
+    const values = [income, essentials, flexible, monthlySavings];
+    if (values.some((value) => !Number.isFinite(value) || value < 0 || value > 10000000)) {
+      setMessage("Enter valid amounts between ₹0 and ₹1 crore.");
+      return;
+    }
+    setData((current) => ({
+      ...current,
+      budget: income,
+      essentialsPlan: essentials,
+      flexiblePlan: flexible,
+      monthlySavingsPlan: monthlySavings,
+    }));
+    setMessage(essentials + flexible + monthlySavings > income
+      ? "Budget saved. Your planned allocations are higher than your income, so adjust them to leave a positive balance."
+      : "Smart budget saved. Your plan and remaining balance have been updated.");
+  }
 
   function updateGoal(event) {
 
@@ -352,6 +394,9 @@ function App() {
     setData(defaultData);
 
     setBudgetInput(String(defaultData.budget));
+    setEssentialsPlanInput(String(defaultData.essentialsPlan));
+    setFlexiblePlanInput(String(defaultData.flexiblePlan));
+    setMonthlySavingsPlanInput(String(defaultData.monthlySavingsPlan));
 
     setGoalInput(defaultData.goalName);
 
@@ -825,6 +870,62 @@ function App() {
         </section>
 
 
+
+        <div className="section-heading" id="smart-budget">
+          <div>
+            <div className="eyebrow">PLAN IT. TRACK IT. ADJUST IT.</div>
+            <h2>Smart Budget Builder</h2>
+            <p>Set your allowance, plan essentials and flexible spending, and see what remains as you record expenses.</p>
+          </div>
+          <span className="section-emoji">💸</span>
+        </div>
+
+        <section className="smart-budget-layout">
+          <article className="panel smart-budget-form-panel">
+            <div className="panel-heading">
+              <div><h3>Your monthly plan</h3><p>Change any amount to update the calculations instantly.</p></div>
+              <span className="panel-icon">₹</span>
+            </div>
+            <form className="feature-form" onSubmit={saveSmartBudget}>
+              <label htmlFor="smart-income">Monthly income or allowance (₹)</label>
+              <input className="text-input" id="smart-income" type="number" min="0" max="10000000" value={budgetInput} onChange={(event) => setBudgetInput(event.target.value)} required />
+              <label htmlFor="essentials-plan">Essentials budget (₹)</label>
+              <input className="text-input" id="essentials-plan" type="number" min="0" max="10000000" value={essentialsPlanInput} onChange={(event) => setEssentialsPlanInput(event.target.value)} required />
+              <p className="smart-budget-help">Food, travel, college expenses and health.</p>
+              <label htmlFor="flexible-plan">Flexible spending budget (₹)</label>
+              <input className="text-input" id="flexible-plan" type="number" min="0" max="10000000" value={flexiblePlanInput} onChange={(event) => setFlexiblePlanInput(event.target.value)} required />
+              <p className="smart-budget-help">Shopping, entertainment and other extras.</p>
+              <label htmlFor="monthly-savings-plan">Monthly savings allocation (₹)</label>
+              <input className="text-input" id="monthly-savings-plan" type="number" min="0" max="10000000" value={monthlySavingsPlanInput} onChange={(event) => setMonthlySavingsPlanInput(event.target.value)} required />
+              <button className="primary-button full-button" type="submit">Save smart budget <span>→</span></button>
+            </form>
+            <p className="feature-footnote">Spent amounts use the expenses you record for {reportMonth}. This demo does not import bank or UPI transactions.</p>
+          </article>
+
+          <article className="panel smart-budget-results-panel">
+            <div className="panel-heading"><div><h3>Your budget at a glance</h3><p>Live totals for the selected month.</p></div><span className="soft-badge">{reportMonth}</span></div>
+            <div className="smart-budget-metrics">
+              <div className="smart-budget-metric"><span>Income / allowance</span><strong>{formatMoney(smartIncome)}</strong></div>
+              <div className="smart-budget-metric"><span>Total budgeted</span><strong>{formatMoney(plannedTotal)}</strong></div>
+              <div className="smart-budget-metric"><span>Spent so far</span><strong>{formatMoney(monthSpend)}</strong></div>
+              <div className={`smart-budget-metric ${balanceAfterSpending < 0 ? "smart-metric-over" : "smart-metric-positive"}`}><span>Balance after spending + savings plan</span><strong>{formatMoney(balanceAfterSpending)}</strong></div>
+            </div>
+            <div className="smart-budget-table-wrap">
+              <table className="smart-budget-table">
+                <thead><tr><th>Category / goal</th><th>Budgeted</th><th>Spent / saved</th><th>Remaining</th></tr></thead>
+                <tbody>
+                  <tr><td><span className="smart-category-dot essentials-dot"></span>Essentials</td><td>{formatMoney(essentialsPlan)}</td><td>{formatMoney(essentialsSpent)}</td><td className={essentialsRemaining < 0 ? "smart-over-text" : ""}>{formatMoney(essentialsRemaining)}</td></tr>
+                  <tr><td><span className="smart-category-dot flexible-dot"></span>Flexible</td><td>{formatMoney(flexiblePlan)}</td><td>{formatMoney(flexibleSpent)}</td><td className={flexibleRemaining < 0 ? "smart-over-text" : ""}>{formatMoney(flexibleRemaining)}</td></tr>
+                  <tr><td><span className="smart-category-dot savings-dot"></span>Savings goal</td><td>{formatMoney(goalAmount)}</td><td>{formatMoney(savedAmount)}</td><td>{formatMoney(Math.max(0, goalAmount - savedAmount))}</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div className={`smart-budget-leftover ${unallocatedAfterPlan < 0 ? "smart-leftover-over" : ""}`}>
+              <div><span>Unallocated after your plan</span><strong>{formatMoney(unallocatedAfterPlan)}</strong></div>
+              <p>{unallocatedAfterPlan < 0 ? "Your plan is above your income. Reduce one or more allocations to bring it within your allowance." : unallocatedAfterPlan === 0 ? "Every rupee has a plan. Keep recording expenses to track your remaining category balances." : "This amount is not assigned yet. You can keep it as a buffer or allocate it to a priority."}</p>
+            </div>
+          </article>
+        </section>
 
         <div className="section-heading" id="goals">
 

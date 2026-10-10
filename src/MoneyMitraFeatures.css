@@ -73,3 +73,34 @@
   .achievement-grid { grid-template-columns: 1fr; }
   .category-total-row { grid-template-columns: 1fr auto 38px; }
 }
+
+
+/* Smart Budget Builder */
+.smart-budget-layout { display: grid; grid-template-columns: minmax(260px, 0.82fr) minmax(0, 1.35fr); gap: 22px; align-items: start; margin-bottom: 36px; }
+.smart-budget-form-panel, .smart-budget-results-panel { min-width: 0; }
+.smart-budget-help { margin: -5px 0 5px; color: #7b867e; font-size: 0.77rem; line-height: 1.45; }
+.smart-budget-metrics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin: 18px 0; }
+.smart-budget-metric { min-width: 0; background: #f5f8f5; border-radius: 13px; padding: 14px; }
+.smart-budget-metric span { display: block; color: #6e7a71; font-size: 0.76rem; line-height: 1.45; margin-bottom: 8px; }
+.smart-budget-metric strong { display: block; color: #263d32; font-size: clamp(1rem, 2vw, 1.35rem); overflow-wrap: anywhere; }
+.smart-budget-metric.smart-metric-over { background: #fff1ed; }
+.smart-budget-metric.smart-metric-over strong, .smart-over-text { color: #b74c36 !important; }
+.smart-budget-metric.smart-metric-positive { background: #eaf7ef; }
+.smart-budget-table-wrap { width: 100%; overflow-x: auto; }
+.smart-budget-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+.smart-budget-table th { color: #78827c; font-size: 0.72rem; font-weight: 700; text-align: right; padding: 10px 8px; border-bottom: 1px solid #e8eee8; white-space: nowrap; }
+.smart-budget-table th:first-child, .smart-budget-table td:first-child { text-align: left; }
+.smart-budget-table td { color: #34483b; padding: 13px 8px; text-align: right; border-bottom: 1px solid #edf1ed; white-space: nowrap; }
+.smart-budget-table td:first-child { font-weight: 650; }
+.smart-category-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 7px; }
+.essentials-dot { background: #67a986; }
+.flexible-dot { background: #e7ad68; }
+.smart-budget-leftover { margin-top: 18px; border: 1px solid #dceee0; border-radius: 13px; padding: 15px; background: #f6fbf7; }
+.smart-budget-leftover > div { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.smart-budget-leftover span { color: #617066; font-size: 0.84rem; }
+.smart-budget-leftover strong { color: #28734c; font-size: 1.2rem; overflow-wrap: anywhere; }
+.smart-budget-leftover p { margin: 8px 0 0; color: #738076; font-size: 0.8rem; line-height: 1.5; }
+.smart-budget-leftover.smart-leftover-over { border-color: #f0d2c9; background: #fff5f1; }
+.smart-budget-leftover.smart-leftover-over strong { color: #b74c36; }
+@media (max-width: 900px) { .smart-budget-layout { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .smart-budget-metrics { grid-template-columns: 1fr; } .smart-budget-table { font-size: 0.75rem; } .smart-budget-table th, .smart-budget-table td { padding: 10px 5px; } }
